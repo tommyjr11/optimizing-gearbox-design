@@ -125,27 +125,7 @@ def check(x):
         return True
     else:
         return False
-def create_animation(data, filename='scatter_animation2.gif'):
-    fig, ax = plt.subplots()
-
-    # 设置x轴和y轴的限制
-    ax.set_xlim(0, data.shape[0]-1)
-    ax.set_ylim(np.min(data), np.max(data))
-
-    # 初始化一个散点图对象
-    scat = ax.scatter([], [])
-
-    def animate(i):
-        # 更新散点图的数据
-        scat.set_offsets(np.c_[np.arange(data.shape[0]), data[:, i]])
-        return scat,
-
-    # 创建动画
-    ani = FuncAnimation(fig, animate, frames=data.shape[1], interval=200, blit=True)
-
-     # 保存为mp4视频
-    ani.save(filename, writer='pillow', fps=120)
-    plt.show()    
+    
 # 蚂蚁位置矩阵
 def Antposition(Ant_Quantity):
     judge = []
@@ -172,11 +152,7 @@ def updatepositionpos(Ant_position,k,r,Ant_Quantity,max,muplite):
         while True:
             for j in range(D):
                 # 随机生成新的位置
-                randomtime = random.uniform(0,1)
-                if(randomtime > 0.5):
-                    new_Ant_position[i][j] = Ant_position[i][j] + update_range(j+1,k,r,1,Ant_position[i][j],muplite)
-                else:
-                    new_Ant_position[i][j] = Ant_position[i][j] - update_range(j+1,k,r,0,Ant_position[i][j],muplite)
+                new_Ant_position[i][j] = Ant_position[i][j] + update_range(j+1,k,r,1,Ant_position[i][j],muplite)
             # 判断是否满足约束条件
             num = num + 1
             if (check(new_Ant_position[i]) == True and new_Ant_position[i] != Ant_position[i]) :
@@ -198,11 +174,7 @@ def updatepositionneg(Ant_position,k,r,Ant_Quantity,max,muplite):
         while True:
             for j in range(0,D):
                 # 随机生成新的位置
-                randomtime = random.uniform(0,1)
-                if(randomtime > 0.5):
-                    new_Ant_position[i][j] = Ant_position[i][j] + update_range(j+1,k,r,1,Ant_position[i][j],muplite)
-                else:
-                    new_Ant_position[i][j] = Ant_position[i][j] - update_range(j+1,k,r,0,Ant_position[i][j],muplite)
+                new_Ant_position[i][j] = Ant_position[i][j] - update_range(j+1,k,r,0,Ant_position[i][j],muplite)
             # 判断是否满足约束条件
             num = num + 1
             if (check(new_Ant_position[i]) == True and new_Ant_position[i] != Ant_position[i]):
@@ -233,6 +205,27 @@ def Antdt(Ant_position,new_Ant_position,Ant_Quantity):
             dt[i] = 0
     return dt
 
+def create_animation(data, filename='scatter_animation.gif'):
+    fig, ax = plt.subplots()
+
+    # 设置x轴和y轴的限制
+    ax.set_xlim(0, data.shape[0]-1)
+    ax.set_ylim(np.min(data), np.max(data))
+
+    # 初始化一个散点图对象
+    scat = ax.scatter([], [])
+
+    def animate(i):
+        # 更新散点图的数据
+        scat.set_offsets(np.c_[np.arange(data.shape[0]), data[:, i]])
+        return scat,
+
+    # 创建动画
+    ani = FuncAnimation(fig, animate, frames=data.shape[1], interval=200, blit=True)
+
+     # 保存为mp4视频
+    ani.save(filename, writer='pillow', fps=120)
+    plt.show()
 
 
 # 更新每只当前蚂蚁的信息量
@@ -323,13 +316,13 @@ def Antfindminvalue(Iteration,Ant_Quantity,pl,D,r,max):
         data.append(value)
         value = []
         # # 更新信息量
-        # dt = Antdt(Ant_position, new_Ant_position,Ant_Quantity)
-        # t = updatet(t, dt, pl,Ant_Quantity)
+       
         Ant_position = new_Ant_position
        
         new_Ant_position = [[0 for i in range(D)] for i in range(Ant_Quantity)]
         new_Ant_positionpos = [[0 for i in range(D)] for i in range(Ant_Quantity)]
         new_Ant_positionneg = [[0 for i in range(D)] for i in range(Ant_Quantity)]
+
     # 找出最小值
     minvlue = Antfunction(Ant_position[0])
     for i in range(Ant_Quantity):
@@ -339,10 +332,6 @@ def Antfindminvalue(Iteration,Ant_Quantity,pl,D,r,max):
             choose = i
     create_animation(np.array(data).T)
     return minvlue ,Ant_position[choose]
+
 print(Antfindminvalue(600,80,0.8,7,0.992,600))
-
-
-        
-
-        
 
